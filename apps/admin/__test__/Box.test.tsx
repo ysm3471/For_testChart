@@ -1,10 +1,14 @@
-import React from 'react'; 
-import { render, screen, fireEvent  } from '@testing-library/react';
-import '@testing-library/jest-dom' 
-import Box from '@/components/Box';  
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom'
+import Box from '@/components/Box';
 import { getDatabase, onValue, query, ref } from 'firebase/database';
 
 jest.mock("firebase/database");
+jest.mock('next/dynamic', () => (importFn: any) => {
+  const Comp = () => <div>test</div>;
+  return Comp;
+});  // 테스트 환경에서는 dynamic import가 동작하지 않아서 mocking 처리 
 
 describe('<Box />', () => {
   beforeEach(() => {
@@ -32,6 +36,18 @@ describe('<Box />', () => {
 
     expect(getDatabase).toHaveBeenCalled(); // db 호출
     expect(ref).toHaveBeenCalledWith("mockDb", "user-posts/numCnt/3");  // ref 호출
+    expect(query).toHaveBeenCalled();  // query 전송
+    expect(onValue).toHaveBeenCalled(); // db값 저장
+  });
+
+  it('버튼 클릭 시 데이터를 불러온다', async () => {
+    render(<Box />);
+
+    const button = screen.getByRole('button', { name: 'Show Chart' });
+    fireEvent.click(button);
+
+    expect(getDatabase).toHaveBeenCalled(); // db 호출
+    expect(ref).toHaveBeenCalledWith("mockDb", "user-posts/numCnt");  // ref 호출
     expect(query).toHaveBeenCalled();  // query 전송
     expect(onValue).toHaveBeenCalled(); // db값 저장
   });
