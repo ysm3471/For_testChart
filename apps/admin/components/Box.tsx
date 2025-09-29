@@ -36,23 +36,22 @@ export default function Box() {
   }
 
   function handleChart() {
-    setShowChart(pop => !pop)
-    if (!showChart) getData()
+    if (!showChart) {
+      const db = getDatabase(app);  // firebase 연결
+      const dataRef = query(ref(db, `user-posts/numCnt`))
+      let copy: number[] = []
+      onValue(dataRef, (snapshot) => {
+        copy = [...snapshot.val().slice(1)]
+        setChartData(copy)
+        setShowChart(pop => !pop)
+      }); 
+    } 
+    else setShowChart(pop => !pop)
   }
 
   function handleSwitch() {
     setSwitchChart(pop => !pop)
-  }
-
-  function getData() {
-    const db = getDatabase(app);  // firebase 연결
-    const dataRef = query(ref(db, `user-posts/numCnt`))
-    let copy: number[] = []
-    onValue(dataRef, (snapshot) => {
-      copy = [...snapshot.val().slice(1)]
-    });
-    setChartData(copy)
-  }
+  } 
 
 
   const buttons = numArr.map((aa, idx) => {
@@ -68,7 +67,7 @@ export default function Box() {
           type: 'pie',
           textinfo: "label+percent",
           textposition: "outside",
-          automargin: true  
+          automargin: true
         }
       ]}
       layout={{ width: 500, height: 300, title: { text: 'Pie Chart' } }}
