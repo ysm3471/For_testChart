@@ -1,0 +1,22 @@
+.button {
+  flex:1;
+  padding:8px 0px;
+  font-size:20px;
+  background:none;
+  border:1px solid #333;
+  border-radius:4px;
+  cursor: pointer;
+
+  /* 버튼 드래그 방지 */
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none 
+}
+.button:hover {
+  background:rgba(255,255,0,0.5);
+}
+.button.seleted {
+  background:rgba(255,255,0,0.5);
+  font-weight: bold;
+}
